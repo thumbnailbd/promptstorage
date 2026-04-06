@@ -222,7 +222,12 @@ const firebaseConfig={apiKey:"AIzaSyAGXcRUon_JcN0V8u-QWYlxyYsH_5k1jEg",authDomai
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
-const GEMINI_KEY="AIzaSyA6XlEAWi5pumMj8uXFBjm0qMpa434BmcA";
+const GEMINI_KEY=const API_KEYS = [
+  "AIzaSyA6XlEAWi5pumMj8uXFBjm0qMpa434BmcA",
+ "AIzaSyCjsLDH1o_4FyFRms2Qq9haw-2-LAkjt5Y",
+ "AIzaSyCuPITRYVm5z6N95jSa5-2n2orAWMWBa4Q"
+];
+const GEMINI_KEY = API_KEYS[Math.floor(Math.random() * API_KEYS.length)];
 let currentUser=null,userData=null,currentImageBase64=null,currentMimeType=null,selectedPlan='monthly';
 
 onAuthStateChanged(auth,async(user)=>{
