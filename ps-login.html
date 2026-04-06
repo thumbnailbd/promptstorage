@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>লগইন — Prompt Storage</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050510;--surface:#0d0d1f;--card:#12122a;--border:#1e1e40;--accent:#6c63ff;--accent2:#ff6b9d;--accent3:#00f5d4;--text:#f0f0ff;--muted:#7070a0;--glow:rgba(108,99,255,.4)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(108,99,255,.15) 0%,transparent 60%);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:50px 50px;opacity:.15;pointer-events:none}
+
+.login-wrap{position:relative;z-index:1;width:100%;max-width:440px;padding:20px}
+.logo-top{text-align:center;margin-bottom:36px}
+.logo-icon{width:52px;height:52px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px;box-shadow:0 8px 25px var(--glow)}
+.logo-name{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.5px}
+.logo-name span{background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.tab-row{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:28px}
+.tab{background:transparent;border:none;border-radius:10px;color:var(--muted);cursor:pointer;font-family:'Hind Siliguri',sans-serif;font-size:15px;font-weight:600;padding:10px;transition:all .2s}
+.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 12px var(--glow)}
+
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;letter-spacing:.5px}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:15px;padding:13px 16px;outline:none;transition:all .2s}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.2)}
+.form-input::placeholder{color:var(--muted)}
+
+.submit-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;padding:15px;transition:all .3s;box-shadow:0 6px 20px var(--glow);margin-top:8px}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--glow)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{color:var(--muted);font-size:12px;white-space:nowrap}
+
+.google-btn{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);cursor:pointer;font-family:'Hind Siliguri',sans-serif;font-size:15px;font-weight:600;padding:13px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.google-btn:hover{border-color:var(--accent);background:rgba(108,99,255,.05)}
+.google-icon{font-size:18px}
+
+.msg-box{border-radius:10px;padding:12px 16px;font-size:13px;margin-top:14px;display:none}
+.msg-error{background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.3);color:var(--accent2)}
+.msg-success{background:rgba(0,245,212,.1);border:1px solid rgba(0,245,212,.3);color:var(--accent3)}
+.back-home{display:block;text-align:center;margin-top:20px;color:var(--muted);font-size:13px;text-decoration:none}
+.back-home:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="logo-top">
+    <div class="logo-icon">🔍</div>
+    <div class="logo-name"><span>Prompt</span> Storage</div>
+  </div>
+
+  <div class="card">
+    <div class="tab-row">
+      <button class="tab active" id="loginTab" onclick="switchTab('login')">লগইন</button>
+      <button class="tab" id="regTab" onclick="switchTab('register')">রেজিস্টার</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label class="form-label">ইমেইল</label>
+        <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">পাসওয়ার্ড</label>
+        <input type="password" class="form-input" id="loginPass" placeholder="••••••••">
+      </div>
+      <button class="submit-btn" id="loginBtn" onclick="doLogin()">লগইন করো</button>
+      <div class="divider"><span>অথবা</span></div>
+      <button class="google-btn" onclick="doGoogle()">
+        <span class="google-icon">🌐</span> Google দিয়ে লগইন
+      </button>
+      <div class="msg-box msg-error" id="loginErr"></div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="regForm" style="display:none">
+      <div class="form-group">
+        <label class="form-label">নাম</label>
+        <input type="text" class="form-input" id="regName" placeholder="আপনার নাম">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ইমেইল</label>
+        <input type="email" class="form-input" id="regEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">পাসওয়ার্ড</label>
+        <input type="password" class="form-input" id="regPass" placeholder="কমপক্ষে ৬ অক্ষর">
+      </div>
+      <button class="submit-btn" id="regBtn" onclick="doRegister()">একাউন্ট খোলো</button>
+      <div class="divider"><span>অথবা</span></div>
+      <button class="google-btn" onclick="doGoogle()">
+        <span class="google-icon">🌐</span> Google দিয়ে রেজিস্টার
+      </button>
+      <div class="msg-box msg-error" id="regErr"></div>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-home">← হোমপেজে ফিরে যাও</a>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAGXcRUon_JcN0V8u-QWYlxyYsH_5k1jEg",
+  authDomain: "thumbnailbd.firebaseapp.com",
+  projectId: "thumbnailbd",
+  storageBucket: "thumbnailbd.firebasestorage.app",
+  messagingSenderId: "644020331665",
+  appId: "1:644020331665:web:3c64d94ee88f23e0228b30"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Already logged in?
+onAuthStateChanged(auth, (user) => {
+  if (user) window.location.href = 'dashboard.html';
+});
+
+async function createUserDoc(user) {
+  const ref = doc(db, 'ps_users', user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      email: user.email,
+      name: user.displayName || user.email.split('@')[0],
+      credits: 20,
+      plan: 'free',
+      analysisCount: 0,
+      createdAt: new Date().toISOString()
+    });
+  }
+}
+
+window.switchTab = function(tab) {
+  document.getElementById('loginForm').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('regForm').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+  document.getElementById('regTab').classList.toggle('active', tab === 'register');
+}
+
+window.doLogin = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginErr');
+  if (!email || !pass) { showMsg(err, 'ইমেইল ও পাসওয়ার্ড দিন!'); return; }
+  btn.disabled = true; btn.textContent = 'লগইন হচ্ছে...';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    window.location.href = 'dashboard.html';
+  } catch(e) {
+    showMsg(err, 'ইমেইল বা পাসওয়ার্ড ভুল!');
+    btn.disabled = false; btn.textContent = 'লগইন করো';
+  }
+}
+
+window.doRegister = async function() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const btn = document.getElementById('regBtn');
+  const err = document.getElementById('regErr');
+  if (!name || !email || !pass) { showMsg(err, 'সব তথ্য দিন!'); return; }
+  if (pass.length < 6) { showMsg(err, 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে!'); return; }
+  btn.disabled = true; btn.textContent = 'একাউন্ট তৈরি হচ্ছে...';
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+    await createUserDoc(cred.user);
+    window.location.href = 'dashboard.html';
+  } catch(e) {
+    showMsg(err, e.code === 'auth/email-already-in-use' ? 'এই ইমেইল আগেই registered!' : 'সমস্যা হয়েছে, আবার চেষ্টা করুন।');
+    btn.disabled = false; btn.textContent = 'একাউন্ট খোলো';
+  }
+}
+
+window.doGoogle = async function() {
+  try {
+    const provider = new GoogleAuthProvider();
+    const cred = await signInWithPopup(auth, provider);
+    await createUserDoc(cred.user);
+    window.location.href = 'dashboard.html';
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function showMsg(el, msg) {
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+</script>
+</body>
+</html>
