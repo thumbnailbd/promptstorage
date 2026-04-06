@@ -222,7 +222,7 @@ const firebaseConfig={apiKey:"AIzaSyAGXcRUon_JcN0V8u-QWYlxyYsH_5k1jEg",authDomai
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
-const GEMINI_KEY="AIzaSyDtOUJtd3M_rdYo5OC0kZZLn6asqJ9nT_8";
+const GEMINI_KEY="AIzaSyA6XlEAWi5pumMj8uXFBjm0qMpa434BmcA";
 let currentUser=null,userData=null,currentImageBase64=null,currentMimeType=null,selectedPlan='monthly';
 
 onAuthStateChanged(auth,async(user)=>{
